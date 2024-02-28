@@ -6,7 +6,7 @@
 
 #define DEFAULT_MAX_COMMAND 100
 
-char* read_command(char str[]);
+char* read_command();
 char* parse_command(char str[]);
 int main_loop();
 
@@ -20,8 +20,7 @@ int main() {
 
 int main_loop() {
     while (1) {
-        char* str = (char*)calloc(DEFAULT_MAX_COMMAND, sizeof(char));
-        read_command(str);
+        char* str = read_command();
         if (strcmp(str, "exit") == 0) {
             return 0;
         }
@@ -29,7 +28,8 @@ int main_loop() {
     }
 }
 
-char* read_command(char str[]) {
+char* read_command() {
+    char* str = (char*)calloc(DEFAULT_MAX_COMMAND, sizeof(char));
     char ch = 0;
     int i = 0;
 
