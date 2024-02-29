@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+// @TODO:
+// - Check for memory leaks
+// - Ensure we check for errors
+
 #define EXIT_SUCCESS 0
 
 #define DEFAULT_MAX_COMMAND 100
