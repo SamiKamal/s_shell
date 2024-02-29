@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #define EXIT_SUCCESS 0
 
 #define DEFAULT_MAX_COMMAND 100
 
 char* read_command();
-char* parse_command(char str[]);
+char* get_program_name(char str[]);
 int main_loop();
 
 int main() {
@@ -41,3 +43,17 @@ char* read_command() {
 
     return str;
 }
+
+char* get_program_name(char str[]) {
+    char* temp_str = (char*)calloc(strlen(str) + 1, sizeof(char));
+    if (temp_str == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(temp_str, str);
+    char* ptr = strtok(temp_str, " ");
+
+    return ptr;
+}
+
