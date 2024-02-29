@@ -24,8 +24,27 @@ int main() {
 int main_loop() {
     while (1) {
         char* str = read_command();
+        char* p_name = get_program_name(str);
+        char** p_args = get_arguments(str);
+
+        int status = 0;
+
+        int pid = 0;
         if (strcmp(str, "exit") == 0) {
             return 0;
+        }
+        pid = fork();
+        if (pid < 0) {
+            perror("fork fail");
+            exit(1);
+        }
+        if (pid == 0) {
+            execvp(p_name, p_args);
+        }
+        int result = waitpid(pid, &status, 0);
+        if (result < 0) {
+            perror("waiting for child failed");
+            exit(1);
         }
         printf("> Shell: ");
     }
