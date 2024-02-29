@@ -10,6 +10,7 @@
 
 char* read_command();
 char* get_program_name(char str[]);
+char** get_arguments(char str[]);
 int main_loop();
 
 int main() {
@@ -55,5 +56,35 @@ char* get_program_name(char str[]) {
     char* ptr = strtok(temp_str, " ");
 
     return ptr;
+}
+
+char** get_arguments(char str[]) {
+    char* temp_str = (char*)malloc((strlen(str) + 1) * sizeof(char));
+    if (temp_str == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(temp_str, str);
+
+    int arg_count = 1; // Start with 1 to account for the program name
+    for (int i = 0; temp_str[i] != '\0'; i++) {
+        if (temp_str[i] == ' ') {
+            arg_count++;
+        }
+    }
+
+    char** args = (char**)malloc((arg_count + 1) * sizeof(char*)); // +1 for NULL pointer
+    if (args == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    args[0] = strtok(temp_str, " "); // Extract the program name
+    for (int i = 1; i < arg_count; i++) {
+        args[i] = strtok(NULL, " "); // Extract subsequent arguments
+    }
+    args[arg_count] = NULL; // Null-terminate the array
+
+    return args;
 }
 
