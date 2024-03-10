@@ -34,23 +34,30 @@ int main_loop() {
         int status = 0;
 
         int pid = 0;
-        if (strcmp(command, "exit") == 0) {
+        if (strcmp(p_name, "exit") == 0) {
             cleanup_main_loop(command, p_name, p_args);
-            return 0;
+            exit(EXIT_SUCCESS);
         }
-        pid = fork();
-        if (pid < 0) {
-            perror("fork fail");
-            exit(1);
+
+        if (strcmp(p_name, "cd") == 0) {
+            chdir(p_args[1]);
         }
-        if (pid == 0) {
-            execvp(p_name, p_args);
+        else {
+            pid = fork();
+            if (pid < 0) {
+                perror("fork fail");
+                exit(EXIT_FAILURE);
+            }
+            if (pid == 0) {
+                execvp(p_name, p_args);
+            }
+            int result = waitpid(pid, &status, 0);
+            if (result < 0) {
+                perror("waiting for child failed");
+                exit(EXIT_FAILURE);
+            }
         }
-        int result = waitpid(pid, &status, 0);
-        if (result < 0) {
-            perror("waiting for child failed");
-            exit(1);
-        }
+
         printf("> Shell: ");
 
         cleanup_main_loop(command, p_name, p_args);
