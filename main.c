@@ -6,6 +6,7 @@
 
 // @TODO:
 // - Ensure we check for errors
+// - Print current directory
 
 #define EXIT_SUCCESS 0
 
@@ -49,7 +50,10 @@ int main_loop() {
                 exit(EXIT_FAILURE);
             }
             if (pid == 0) {
-                execvp(p_name, p_args);
+                if (execvp(p_name, p_args) < 0) {
+                    perror("execvp error");
+                    exit(EXIT_FAILURE); // Use specific error codes as needed
+                }
             }
             int result = waitpid(pid, &status, 0);
             if (result < 0) {
@@ -58,7 +62,13 @@ int main_loop() {
             }
         }
 
-        printf("> Shell: ");
+        if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+            // Handle child process error
+            printf("\033[1;31m> Shell: \033[0m");
+        }
+        else {
+            printf("> Shell: ");
+        }
 
         cleanup_main_loop(command, p_name, p_args);
     }
